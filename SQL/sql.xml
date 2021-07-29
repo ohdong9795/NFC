@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nfc">
+    <select id="confirm_id">
+        SELECT *
+          FROM NFC_TAG
+         WHERE ID = #{ID}
+    </select>
+
+    <insert id="register">
+        INSERT INTO NFC_TAG
+        VALUES (#{ID}, 1, #{PHONE}, #{ADDRESS}, 0)
+    </insert>
+
+    <insert id="register2">
+        INSERT INTO USERS
+        VALUES (#{PHONE}, 0)
+    </insert>
+
+    <select id="check_user">
+        SELECT COUNT(PHONE) AS COUNT
+          FROM USERS
+         WHERE PHONE = #{PHONE}
+    </select>
+
+    <update id="update">
+        UPDATE NFC_TAG
+           SET STATE = 1,
+               PHONE = #{PHONE},
+               ADDRESS = #{ADDRESS}
+         WHERE ID = #{ID}
+    </update>
+
+    <update id="request">
+        UPDATE NFC_TAG
+           SET REQUEST = 1
+         WHERE ID = #{ID}
+    </update>
+
+    <update id="request2">
+        UPDATE USERS
+           SET REWARD = ((SELECT REWARD
+                           FROM USERS
+                          WHERE PHONE = (SELECT PHONE
+                                           FROM NFC_TAG
+                                          WHERE ID = #{ID})) + 
+                                                (TRUNC(DBMS_RANDOM.VALUE(10, 100))))
+         WHERE PHONE = (SELECT PHONE
+                         FROM NFC_TAG
+                        WHERE ID = #{ID})
+    </update>
+
+    <select id="reward">
+        SELECT REWARD
+          FROM USERS
+         WHERE PHONE = (SELECT PHONE
+                          FROM NFC_TAG
+                         WHERE ID = #{ID})
+    </select>
+
+    <select id="all">
+        SELECT ID,
+               PHONE,
+               ADDRESS
+          FROM NFC_TAG
+         ORDER BY ID
+    </select>
+
+    <select id="registered">
+        SELECT ID,
+               PHONE,
+               ADDRESS
+          FROM NFC_TAG
+         WHERE STATE = 1
+         ORDER BY ID
+    </select>
+
+    <select id="requested">
+        SELECT ID,
+               PHONE,
+               ADDRESS
+          FROM NFC_TAG
+         WHERE STATE = 1
+           AND REQUEST = 1
+         ORDER BY ID
+    </select>
+
+    <update id="complete">
+        UPDATE NFC_TAG
+           SET STATE = 0,
+               PHONE = NULL,
+               ADDRESS = NULL,
+               REQUEST = 0
+         WHERE ID = #{ID}
+    </update>
+</mapper>

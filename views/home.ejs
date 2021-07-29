@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+    </head>
+    <body>
+        <button id="t1">전 체</button>
+        <button id="t2">등록된</button>
+        <button id="t3">수거요청된</button>
+        <br/>
+        <div id="c1">
+            탭 1 내용
+        </div>
+        <div id="c2" hidden="true">
+            탭 2 내용
+        </div>
+        <div id="c3" hidden="true">
+            탭 3 내용
+        </div>
+    <script>
+        var c1 = document.getElementById('c1')
+        var c2 = document.getElementById('c2')
+        var c3 = document.getElementById('c3')
+        
+        fetch(`http://121.145.133.119:3000/all`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }})
+        .then(res=>res.json())
+        .then(res=>{
+            var temp = '<br/>'
+            for (var i = 0; i < res.length; i++) {
+                temp = temp +
+                'ID : ' + res[i].ID +
+                '<br/> PHONE : ' + res[i].PHONE +
+                '<br/> ADDRESS : ' + res[i].ADDRESS +
+                '<br/> <br/>'
+            }
+            c1.innerHTML = temp
+        })
+
+        fetch(`http://121.145.133.119:3000/registered`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }})
+        .then(res=>res.json())
+        .then(res=>{
+            var temp = '<br/>'
+            for (var i = 0; i < res.length; i++) {
+                temp = temp +
+                'ID : ' + res[i].ID +
+                '<br/> PHONE : ' + res[i].PHONE +
+                '<br/> ADDRESS : ' + res[i].ADDRESS +
+                '<br/> <br/>'
+            }
+            c2.innerHTML = temp
+        })
+
+        fetch(`http://121.145.133.119:3000/requested`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }})
+        .then(res=>res.json())
+        .then(res=>{
+            var temp = '<br/>'
+            for (var i = 0; i < res.length; i++) {
+                temp = temp +
+                'ID : ' + res[i].ID +
+                '<br/> PHONE : ' + res[i].PHONE +
+                '<br/> ADDRESS : ' + res[i].ADDRESS +
+                '<br/> <br/>'
+            }
+            c3.innerHTML = temp
+        })
+
+        document.getElementById('t1').onclick = ()=>{
+            c1.hidden = false
+            c2.hidden = true
+            c3.hidden = true
+        }
+        document.getElementById('t2').onclick = ()=>{
+            c1.hidden = true
+            c2.hidden = false
+            c3.hidden = true
+        }
+        document.getElementById('t3').onclick = ()=>{
+            c1.hidden = true
+            c2.hidden = true
+            c3.hidden = false
+        }
+    </script>
+    </body>
+</html>
